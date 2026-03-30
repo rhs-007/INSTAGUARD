@@ -1,0 +1,250 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model chat {
+  id              String            @id @default(cuid())
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  chatparticipant chatparticipant[]
+  message         message[]
+}
+
+model chatparticipant {
+  id     String @id @default(cuid())
+  chatId String
+  userId String
+
+  chat chat @relation(fields: [chatId], references: [id], map: "ChatParticipant_chatId_fkey")
+  user user @relation(fields: [userId], references: [id], map: "ChatParticipant_userId_fkey")
+
+  @@unique([chatId, userId], map: "ChatParticipant_chatId_userId_key")
+  @@index([userId], map: "ChatParticipant_userId_fkey")
+}
+
+model comment {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  text      String
+  createdAt DateTime @default(now())
+
+  post post @relation(fields: [postId], references: [id], map: "Comment_postId_fkey")
+  user user @relation(fields: [userId], references: [id], map: "Comment_userId_fkey")
+
+  @@index([postId], map: "Comment_postId_fkey")
+  @@index([userId], map: "Comment_userId_fkey")
+}
+
+model follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  user_follow_followerIdTouser  user @relation("follow_followerIdTouser", fields: [followerId], references: [id], map: "Follow_followerId_fkey")
+  user_follow_followingIdTouser user @relation("follow_followingIdTouser", fields: [followingId], references: [id], map: "Follow_followingId_fkey")
+
+  @@unique([followerId, followingId], map: "Follow_followerId_followingId_key")
+  @@index([followingId], map: "Follow_followingId_fkey")
+}
+
+model like {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  post post @relation(fields: [postId], references: [id], map: "Like_postId_fkey")
+  user user @relation(fields: [userId], references: [id], map: "Like_userId_fkey")
+
+  @@unique([postId, userId], map: "Like_postId_userId_key")
+  @@index([userId], map: "Like_userId_fkey")
+}
+
+model message {
+  id               String  @id @default(cuid())
+  chatId           String
+  senderId         String
+  recipientId      String
+  type             String
+  text             String?
+  imageUrl         String?
+  status           String  @default("visible")
+  restrictedReason String?
+  moderationMeta   String? @db.LongText
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  seenAt    DateTime?
+  editedAt  DateTime?
+  deletedAt DateTime?
+
+  chat                           chat @relation(fields: [chatId], references: [id], map: "Message_chatId_fkey")
+  user_message_recipientIdTouser user @relation("message_recipientIdTouser", fields: [recipientId], references: [id], map: "Message_recipientId_fkey")
+  user_message_senderIdTouser    user @relation("message_senderIdTouser", fields: [senderId], references: [id], map: "Message_senderId_fkey")
+
+  restrictedcontent restrictedcontent?
+  moderationqueue   moderationqueue?
+
+  @@index([chatId], map: "Message_chatId_fkey")
+  @@index([recipientId], map: "Message_recipientId_fkey")
+  @@index([senderId], map: "Message_senderId_fkey")
+}
+
+model notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  senderId  String
+  postId    String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user user @relation(fields: [userId], references: [id], map: "Notification_userId_fkey")
+
+  @@index([userId], map: "Notification_userId_fkey")
+}
+
+model post {
+  id                 String    @id @default(cuid())
+  userId             String
+  imageUrl           String
+  caption            String?
+  isProtected        Boolean   @default(false)
+  protectedEnabledAt DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  comment         comment[]
+  like            like[]
+  user            user              @relation(fields: [userId], references: [id], map: "Post_userId_fkey")
+  suspiciousevent suspiciousevent[]
+  postViewTraces  PostViewTrace[]
+
+  @@index([userId], map: "Post_userId_fkey")
+}
+
+model PostViewTrace {
+  id        String   @id @default(cuid())
+  postId    String
+  viewerId  String
+  viewMs    Int
+  completed Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  post   post @relation(fields: [postId], references: [id], onDelete: Cascade, map: "PostViewTrace_postId_fkey")
+  viewer user @relation(fields: [viewerId], references: [id], onDelete: Cascade, map: "PostViewTrace_viewerId_fkey")
+
+  @@index([postId], map: "PostViewTrace_postId_idx")
+  @@index([viewerId], map: "PostViewTrace_viewerId_idx")
+  @@index([postId, viewerId], map: "PostViewTrace_postId_viewerId_idx")
+  @@index([createdAt], map: "PostViewTrace_createdAt_idx")
+}
+
+model restrictedcontent {
+  id                String    @id @default(cuid())
+  messageId         String    @unique(map: "RestrictedContent_messageId_key")
+  chatId            String
+  senderId          String
+  recipientId       String
+  imageUrl          String
+  moderationMeta    String?   @db.LongText
+  decision          String    @default("pending")
+  reviewedByAdminId String?
+  reviewedAt        DateTime?
+  createdAt         DateTime  @default(now())
+
+  message message @relation(fields: [messageId], references: [id], map: "RestrictedContent_messageId_fkey")
+}
+
+model suspiciousevent {
+  id        String   @id @default(cuid())
+  postId    String
+  viewerId  String
+  type      String
+  meta      String?
+  createdAt DateTime @default(now())
+
+  post post @relation(fields: [postId], references: [id], map: "SuspiciousEvent_postId_fkey")
+
+  @@index([postId], map: "SuspiciousEvent_postId_fkey")
+}
+
+model user {
+  id        String   @id @default(cuid())
+  username  String   @unique(map: "User_username_key")
+  email     String   @unique(map: "User_email_key")
+  password  String
+  bio       String?
+  avatarUrl String?  @db.LongText
+  role      String   @default("USER")
+
+  isBanned       Boolean   @default(false)
+  bannedAt       DateTime?
+  banReason      String?
+  suspendedUntil DateTime?
+  suspendReason  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chatparticipant                   chatparticipant[]
+  comment                           comment[]
+  follow_follow_followerIdTouser    follow[]          @relation("follow_followerIdTouser")
+  follow_follow_followingIdTouser   follow[]          @relation("follow_followingIdTouser")
+  like                              like[]
+  message_message_recipientIdTouser message[]         @relation("message_recipientIdTouser")
+  message_message_senderIdTouser    message[]         @relation("message_senderIdTouser")
+  notification                      notification[]
+  post                              post[]
+  postViewTraces                    PostViewTrace[]
+  moderationqueue_sender            moderationqueue[] @relation("ModerationQueue_sender")
+  moderationqueue_recipient         moderationqueue[] @relation("ModerationQueue_recipient")
+  moderationqueue_resolvedBy        moderationqueue[] @relation("ModerationQueue_resolvedBy")
+}
+
+enum ModerationStatus {
+  PENDING
+  RESOLVED
+}
+
+enum ModerationKind {
+  TEXT
+  IMAGE
+}
+
+model moderationqueue {
+  id     String           @id @default(cuid())
+  kind   ModerationKind   @default(TEXT)
+  status ModerationStatus @default(PENDING)
+
+  messageId   String @unique
+  chatId      String
+  senderId    String
+  recipientId String
+
+  textSnapshot  String? @db.LongText
+  imageSnapshot String?
+  reason        String?
+  matched       String?
+
+  createdAt      DateTime @default(now())
+  resolvedAt     DateTime?
+  resolvedById   String?
+  resolutionNote String?
+
+  message    message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  sender     user    @relation("ModerationQueue_sender", fields: [senderId], references: [id])
+  recipient  user    @relation("ModerationQueue_recipient", fields: [recipientId], references: [id])
+  resolvedBy user?   @relation("ModerationQueue_resolvedBy", fields: [resolvedById], references: [id])
+
+  @@index([status, createdAt])
+  @@index([senderId])
+  @@index([chatId])
+}

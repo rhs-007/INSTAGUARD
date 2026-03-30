@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@1,700&display=swap');
+@import "tailwindcss";
+
+/* Theme fonts */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Playfair Display", serif;
+}
+
+/* Base layout */
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  @apply bg-gradient-to-br from-white via-gray-50 to-gray-100 text-gray-900 antialiased;
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* Smooth interactions */
+* {
+  box-sizing: border-box;
+}
+
+button,
+a,
+input,
+textarea,
+img {
+  transition: all 0.2s ease;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* UI Components */
+
+.glass-card {
+  @apply bg-white/80 backdrop-blur-md border border-white/40 shadow-lg rounded-2xl;
+}
+
+.soft-card {
+  @apply bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300;
+}
+
+.hover-lift {
+  @apply hover:-translate-y-1 hover:shadow-xl transition-all duration-300;
+}
+
+.gradient-text {
+  @apply bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 bg-clip-text text-transparent;
+}
+
+.primary-btn {
+  @apply px-4 py-2 rounded-xl font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 active:scale-95 shadow-md transition-all;
+}
+
+.secondary-btn {
+  @apply px-4 py-2 rounded-xl font-semibold bg-gray-100 hover:bg-gray-200 active:scale-95 transition-all;
+}
+
+.input-modern {
+  @apply w-full rounded-xl border border-gray-200 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm;
+}
+
+/* Page animation */
+
+.page-enter {
+  animation: fadeUp 0.35s ease;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

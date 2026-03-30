@@ -1,0 +1,8 @@
+{
+  "name": "InstaGuard",
+  "description": "A high-security Instagram clone with screenshot deterrence and AI-powered DM moderation.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

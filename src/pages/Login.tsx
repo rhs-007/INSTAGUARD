@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
+import securityGif from "../assets/security.gif";
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -116,7 +118,7 @@ export default function Login() {
           {/* GIF CONTAINER */}
           <div className="w-full h-full rounded-xl overflow-hidden flex items-center justify-center">
             <img
-              src="/security.gif"
+              src={securityGif}
               alt="secure animation"
               className="w-full h-full object-cover 
                          opacity-90 

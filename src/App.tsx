@@ -10,7 +10,7 @@ import { AuthProvider, useAuth } from "./hooks/useAuth";
 import { SocketProvider } from "./hooks/useSocket";
 import Search from "./pages/Search";
 import CreatePost from "./pages/CreatePost";
-import InfoPage from "./pages/info"; // ✅ correct import
+import InfoPage from "./pages/Info"; // ✅ correct import
 
 function AppRoutes() {
   const { user, loading } = useAuth();

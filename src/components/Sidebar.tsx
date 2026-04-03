@@ -14,7 +14,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import logo from "../assets/logo.jpg";
+import logo from "../assets/logo2.png";
 
 type MenuItem = {
   icon: any;
@@ -35,7 +35,7 @@ export default function Sidebar() {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement | null>(null);
 
-  const [messageBadge] = useState(3);
+  const [messageBadge] = useState();
 
   useEffect(() => {
     localStorage.setItem("sidebar-collapsed", String(collapsed));
@@ -87,16 +87,7 @@ export default function Sidebar() {
 
   return (
     <>
-      <motion.button
-        whileHover={{ scale: 1.08 }}
-        whileTap={{ scale: 0.96 }}
-        onClick={() => navigate("/create")}
-        className="fixed bottom-6 right-6 z-[999] flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white shadow-2xl md:hidden"
-        type="button"
-        title="Create Post"
-      >
-        <PlusSquare size={24} />
-      </motion.button>
+      
 
       <motion.aside
         layout
@@ -155,14 +146,7 @@ export default function Sidebar() {
             )}
           </AnimatePresence>
 
-          <button
-            type="button"
-            onClick={() => setCollapsed((prev) => !prev)}
-            title={collapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-700 shadow-sm transition-all duration-300 hover:scale-105 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-          >
-            {collapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
-          </button>
+          
         </div>
 
         <div
@@ -170,17 +154,7 @@ export default function Sidebar() {
             collapsed ? "flex-col items-center gap-3" : "items-center gap-3"
           }`}
         >
-          <button
-            type="button"
-            onClick={() => navigate("/create")}
-            title="Create Post"
-            className={`relative flex items-center justify-center rounded-2xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white shadow-lg transition-all duration-300 hover:scale-[1.03] ${
-              collapsed ? "h-11 w-11" : "h-11 flex-1 gap-2 px-4"
-            }`}
-          >
-            <PlusSquare size={18} />
-            {!collapsed && <span className="font-semibold">Create</span>}
-          </button>
+          
         </div>
 
         <nav className="flex-1 space-y-2">
@@ -340,29 +314,9 @@ export default function Sidebar() {
                   collapsed ? "left-20 w-56" : "left-0 w-full"
                 }`}
               >
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigate(`/profile/${user?.username}`);
-                    setProfileMenuOpen(false);
-                  }}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-800 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
-                >
-                  <UserIcon size={17} />
-                  My Profile
-                </button>
+                
 
-                <button
-                  type="button"
-                  onClick={() => {
-                    navigate(`/profile/${user?.username}`);
-                    setProfileMenuOpen(false);
-                  }}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-800 transition hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-800"
-                >
-                  <Settings size={17} />
-                  Edit Profile
-                </button>
+                
 
                 <div className="mx-3 h-px bg-gray-200 dark:bg-gray-800" />
 

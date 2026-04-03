@@ -166,6 +166,7 @@ export default function Search() {
       <div className="max-w-5xl mx-auto space-y-6">
 
         {/* SEARCH CARD */}
+        <div className="flex justify-center">
         <div className="soft-card p-6">
 
           <h1 className="text-2xl font-bold mb-6">Search</h1>
@@ -334,6 +335,7 @@ export default function Search() {
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }

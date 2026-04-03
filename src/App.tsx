@@ -10,6 +10,7 @@ import { AuthProvider, useAuth } from "./hooks/useAuth";
 import { SocketProvider } from "./hooks/useSocket";
 import Search from "./pages/Search";
 import CreatePost from "./pages/CreatePost";
+import InfoPage from "./pages/info"; // ✅ correct import
 
 function AppRoutes() {
   const { user, loading } = useAuth();
@@ -28,6 +29,14 @@ function AppRoutes() {
 
       <main className={`flex-1 ${user ? "md:ml-64" : ""}`}>
         <Routes>
+
+          {/* ✅ FIRST PAGE (IMPORTANT CHANGE) */}
+          <Route
+            path="/"
+            element={<InfoPage />}
+          />
+
+          {/* AUTH ROUTES */}
           <Route
             path="/login"
             element={!user ? <Login /> : <Navigate to="/feed" replace />}
@@ -37,11 +46,7 @@ function AppRoutes() {
             element={!user ? <Signup /> : <Navigate to="/feed" replace />}
           />
 
-          <Route
-            path="/"
-            element={<Navigate to={user ? "/feed" : "/login"} replace />}
-          />
-
+          {/* PROTECTED ROUTES */}
           <Route
             path="/feed"
             element={user ? <Feed /> : <Navigate to="/login" replace />}
@@ -62,6 +67,8 @@ function AppRoutes() {
             path="/direct/inbox"
             element={user ? <Chat /> : <Navigate to="/login" replace />}
           />
+
+          {/* ADMIN */}
           <Route
             path="/admin"
             element={
@@ -73,10 +80,9 @@ function AppRoutes() {
             }
           />
 
-          <Route
-            path="*"
-            element={<Navigate to={user ? "/feed" : "/login"} replace />}
-          />
+          {/* ✅ FALLBACK ROUTE */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+
         </Routes>
       </main>
     </div>
